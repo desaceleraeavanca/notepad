@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloco de Notas V4 - Tailwind</title>
+
+    <!-- Tailwind CSS CDN (inclui plugin de tipografia) -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Link para o CSS Customizado Externo -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Tailwind Configuration (necessário no HTML ao usar CDN) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e', },
+                        secondary: { 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', },
+                        dark: { 800: '#1e293b', 900: '#0f172a', },
+                        surface: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', },
+                        danger: '#ef4444',
+                    },
+                    animation: {
+                        'float': 'float 12s ease-in-out infinite alternate',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        float: { '0%': { transform: 'translateY(0) scale(1)' }, '100%': { transform: 'translateY(-20px) scale(1.05)' }, },
+                        fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } },
+                    },
+                    // Configuração do plugin Typography (interpretada pelo CDN)
+                    typography: (theme) => ({
+                        DEFAULT: {
+                            css: {
+                                color: theme('colors.surface.700'),
+                                'h1, h2, h3, h4, h5, h6': { color: theme('colors.dark.800'), fontWeight: '600', },
+                                blockquote: { color: theme('colors.surface.600'), borderLeftColor: theme('colors.surface.300'), fontStyle: 'normal', fontWeight: '400', paddingLeft: '1em', },
+                                a: { color: theme('colors.primary.600'), '&:hover': { color: theme('colors.primary.700'), }, textDecoration: 'none', },
+                                'ul > li::marker': { color: theme('colors.surface.400'), },
+                                'ol > li::marker': { color: theme('colors.surface.500'), },
+                                'h1, h2, blockquote, figure, pre, table': { marginTop: '1em', marginBottom: '0.8em', },
+                                p: { marginTop: '0.5em', marginBottom: '0.5em', lineHeight: theme('lineHeight.relaxed') },
+                                'ul, ol': { marginTop: '0.8em', marginBottom: '0.8em', paddingLeft: '1.5em' },
+                                'li': { marginTop: '0.2em', marginBottom: '0.2em' },
+                            },
+                        },
+                    }),
+                }
+            },
+            // Plugins já incluídos via CDN com ?plugins=typography
+        }
+    </script>
+
+</head>
+<body class="min-h-screen bg-gradient-to-br from-surface-50 to-surface-100 font-sans text-dark-800 relative overflow-x-hidden">
+
+    <!-- Efeitos de fundo (Blobs) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div class="absolute top-[-10%] left-[-15%] w-[400px] h-[400px] bg-primary-400 rounded-full filter blur-[90px] opacity-15 animate-float" style="animation-duration: 13s;"></div>
+        <div class="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-secondary-500 rounded-full filter blur-[90px] opacity-15 animate-float" style="animation-duration: 11s;"></div>
+    </div>
+
+    <!-- Container Principal da Aplicação -->
+    <div id="app" class="flex h-screen">
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-[280px] h-full bg-white/80 backdrop-blur-lg border-r border-surface-200 shadow-sm flex flex-col flex-shrink-0 relative transition-all duration-300 ease-in-out z-30">
+            <div class="sidebar-header p-4 border-b border-surface-200 flex-shrink-0">
+                <button id="newNoteBtn" class="w-full flex items-center justify-center px-4 py-2.5 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-600 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400 transition-all duration-200 active:scale-[0.98] active:shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                    <span>Nova Nota</span>
+                </button>
+            </div>
+            <div class="search-container p-3 flex-shrink-0 relative">
+                <input id="searchInput" type="text" class="w-full h-10 pl-9 pr-3 py-2 border border-surface-300 bg-surface-50/60 rounded-lg text-sm placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition-colors" placeholder="Buscar notas...">
+                <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none"></i>
+            </div>
+            <div id="notesList" class="flex-grow overflow-y-auto p-2 space-y-1.5">
+                {/* Lista de Notas será preenchida pelo JS */}
+            </div>
+
+            <button id="sidebarToggle" class="group tooltip absolute -right-[25px] top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm border border-l-0 border-surface-200 px-1.5 py-3 rounded-r-lg cursor-pointer z-10 shadow-sm hover:bg-white hover:shadow-md transition-all">
+                <i data-lucide="chevron-left" id="sidebarToggleIcon" class="w-5 h-5 text-surface-600 transition-transform duration-300 ease-in-out block"></i>
+                <span class="tooltip-text">Ocultar Barra Lateral</span>
+            </button>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main id="mainContent" class="flex-grow p-6 md:p-10 flex items-center justify-center relative z-20">
+            <div id="notepadContainer" class="w-full max-w-4xl h-[calc(100vh-5rem)] md:h-[calc(100vh-8rem)] bg-white/90 backdrop-blur-xl border border-white/30 rounded-xl shadow-lg flex flex-col overflow-hidden relative">
+                <div id="toolbar" class="h-12 p-2 border-b border-surface-200 bg-surface-50/80 flex items-center space-x-1 overflow-x-auto flex-shrink-0 relative z-20">
+                    {/* Toolbar será preenchida pelo JS */}
+                </div>
+                <div class="title-input-container px-6 py-2 border-b border-surface-200 flex-shrink-0">
+                    <input id="titleInput" type="text" class="w-full text-xl font-semibold bg-transparent focus:outline-none placeholder-surface-400" placeholder="Título da Nota">
+                </div>
+                <div class="note-content-wrapper flex-grow overflow-hidden relative">
+                     <div id="noteContent"
+                          class="prose prose-sm sm:prose-base max-w-none h-full overflow-y-auto p-6 focus:outline-none text-base leading-relaxed text-surface-800 relative"
+                          contenteditable="true" spellcheck="false" data-placeholder="Comece a digitar...">
+                        {/* O conteúdo HTML rico será inserido aqui pelo JS */}
+                     </div>
+                </div>
+                <div class="status-bar px-4 py-1.5 border-t border-surface-200 bg-surface-50/80 text-xs text-surface-500 text-right space-x-4 flex-shrink-0 relative z-10">
+                    <span id="wordCount">0 palavras</span>
+                    <span id="charCount">0 caracteres</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Link para o JavaScript Externo -->
+    <script src="script.js"></script>
+
+</body>
+</html>
